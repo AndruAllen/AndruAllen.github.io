@@ -5,8 +5,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@700&display=swap" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    <link rel="stylesheet" href="style.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js" integrity="sha512-5vwN8yor2fFT9pgPS9p9R7AszYaNn0LkQElTXIsZFCL7ucT8zDCAqlQXDdaqgA1mZP47hdvztBMsIoFxq/FyyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="style.css">
 	<title></title>
 </head>
 <body>
@@ -15,14 +15,73 @@
     <div class="container">
         <div class="col col-9">
             <h2>Andrew Allen</h2>
+            <a href="Resume_AA_v202107.pdf">Resume</a>
         </div>  
     </div>	
-        <div class="col col-9">
-	    <a href="Resume_AA_v202107.pdf">Resume</a>
-        </div>
-    <div class="container">
         
+    <div class="container col col-9">
+
+    <canvas id="myChart" width="180" height="90"></canvas>
+<script>
+
+    function getJSON(url) {
+        var resp ;
+        var xmlHttp ;
+
+        resp  = '' ;
+        xmlHttp = new XMLHttpRequest();
+
+        if(xmlHttp != null)
+        {
+            xmlHttp.open( "GET", url, false );
+            xmlHttp.send( null );
+            resp = xmlHttp.responseText;
+        }
+
+        return resp ;
+    }
+
+function getDates(main) {
+    let indates = [];
+    let net_flow = [];
+    for (var i = 0; i < main.length; i++ ) {
+        indates.push((main[i].HOUR).slice(0,10));
+        net_flow.push((main[i].NET_FLOW));
+    }
+    return [indates.reverse(),net_flow.reverse()]
+};
+const [dates, vals] = getDates(JSON.parse(getJSON("https://api.flipsidecrypto.com/api/v2/queries/2829a9db-70f6-4ebc-8002-7c7af0ec1e24/data/latest")));
+console.log(dates);
+
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: dates,
+        datasets: [{
+            label: 'Net Withdraws of ETH in USD from Centralized Exchanges by Day',
+            data: vals,
+            backgroundColor: [
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
     </div>
+
 
 </body>
 </html>
